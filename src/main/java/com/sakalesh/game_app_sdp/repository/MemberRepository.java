@@ -7,6 +7,5 @@ import com.sakalesh.game_app_sdp.modal.Member;
 
 @Repository
 public interface MemberRepository extends MongoRepository<Member, String> {
-
-    
+    boolean existsByPhone(String phone);
 }

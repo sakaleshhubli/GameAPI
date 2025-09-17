@@ -11,14 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.sakalesh.game_app_sdp.modal.Member;
-import com.sakalesh.game_app_sdp.repository.MemberRepository;
+import com.sakalesh.game_app_sdp.services.MemberService;
+import com.sakalesh.game_app_sdp.exceptions.*;
 
 @RestController
 @RequestMapping(path = "/members")
 public class MemberController {
     
     @Autowired
-    private MemberRepository repo;
+    private MemberService service;
     
     // Add home endpoint for root path
     @GetMapping("/")
@@ -32,36 +33,27 @@ public class MemberController {
     }
     
     @PostMapping
-    public Member create(@RequestBody Member member) {
-        member.setId(null);
-        Member savedMember = repo.save(member);
-        return savedMember;
+    public Member create(@RequestBody Member member) throws BusinessException {
+        return service.create(member);
     }
     
     @GetMapping
     public List<Member> findAll() {
-        List<Member> members = repo.findAll();
-        return members;
+        return service.findAll();
     }
     
     @GetMapping(path = "/{id}")
-    public Member findById(@PathVariable String id) {
-        Member member = repo.findById(id).get();
-        return member;
+    public Member findById(@PathVariable String id) throws IdNotPresentException {
+        return service.findById(id);
     }
     
     @PutMapping(path = "/{id}")
-    public Member update(@PathVariable String id, @RequestBody Member member) {
-        Member oldMember = repo.findById(id).get();
-        oldMember.setName(member.getName());
-        oldMember.setBalance(member.getBalance());
-        oldMember.setPhone(member.getPhone());
-        Member updatedMember = repo.save(oldMember);
-        return updatedMember;
+    public Member update(@PathVariable String id, @RequestBody Member member) throws IdNotPresentException, BusinessException {
+        return service.update(id, member);
     }
     
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable String id) {
-        repo.deleteById(id);
+    public void delete(@PathVariable String id) throws IdNotPresentException {
+        service.delete(id);
     }
 }
