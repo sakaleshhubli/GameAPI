@@ -1,167 +1,137 @@
+# Game App SDP (Spring Boot + MongoDB Atlas)
 
-# GameAPI
+A Spring Boot REST API backed by MongoDB for managing games, members, collections (daily cash collections), admin users, and transactions. Controllers use DTOs for requests/responses and map via a shared `DtoMapper`.
 
-A Spring Boot implementation of a gaming-related API.
-
----
-
-## Table of Contents
-
-- [About](#about)  
-- [Features](#features)  
-- [Technology Stack](#technology-stack)  
-- [Getting Started](#getting-started)  
-  - [Prerequisites](#prerequisites)  
-  - [Setup](#setup)  
-  - [Running](#running)  
-- [API Endpoints](#api-endpoints)  
-- [Configuration](#configuration)  
-- [Docker](#docker)  
-- [Contributing](#contributing)  
-
----
-
-## About
-
-GameAPI is a backend service built using Spring Boot. It provides endpoints for managing games and related operations.  
-The project follows a clean structure with standard conventions, aimed at being easy to understand, test, and extend.
-
----
-
-## Features
-
-- RESTful API endpoints for CRUD operations on games  
-- Uses Spring Boot framework  
-- Containerization support via Docker  
-- Build tool: Maven  
-- Environment configuration managed via properties files  
-
----
-
-## Technology Stack
-
-| Component       | Version / Details |
-|-----------------|-------------------|
-| Language        | Java |
-| Framework       | Spring Boot |
-| Build Tool      | Maven |
-| Containerization| Docker |
-| Utilities       | Maven Wrapper, Spring Config |
-
----
+## Tech Stack
+- Java 21
+- Spring Boot
+- MongoDB Atlas
+- Maven
 
 ## Getting Started
 
-### Prerequisites
-
-Make sure you have installed:
-
-- Java (JDK 21 or higher recommended)  
-- Maven  
-- Docker (if you want to use containers)
-
-### Setup
-
-1. Clone the repository  
-   ```bash
-   git clone https://github.com/sakaleshhubli/GameAPI.git
-   cd GameAPI
-
-
-2. Build the project using Maven
-
-   ```bash
-   mvn clean install
-   ```
-
-### Running
-
-* To run locally:
-
-  ```bash
-  mvn spring-boot:run
-  ```
-
-* Or, package into a jar and run:
-
-  ```bash
-  mvn package
-  java -jar target/GameAPI-<version>.jar
-  ```
-
----
-
-## API Endpoints
-
-| HTTP Method | Path          | Description                   |
-| ----------- | ------------- | ----------------------------- |
-| `GET`       | `/games`      | List all games                |
-| `GET`       | `/games/{id}` | Get details for a single game |
-| `POST`      | `/games`      | Create a new game             |
-| `PUT`       | `/games/{id}` | Update an existing game       |
-| `DELETE`    | `/games/{id}` | Delete a game                 |
-| `GET`       | `/members `      | List all members                |
-| `GET`       | `/members /{id}` | Get details for a single game |
-| `POST`      | `/members`      | Create a new game             |
-| `PUT`       | `/members/{id}` | Update an existing game       |
-| `DELETE`    | `/members/{id}` | Delete a game                 |
-
-
----
-
-## Configuration
-
-Configuration files (e.g. `application.properties` or `application.yml`) allow you to set up things like:
-
-* Server port
-* Database connection (if applicable)
-* Logging levels
-
-Environment-specific overrides are encouraged (e.g. for dev vs production).
-
----
-
-## Docker
-
-A `Dockerfile` is included so you can containerize the application.
-
-To build the Docker image:
-
-```bash
-docker build -t gameapi:latest .
+1) Configure MongoDB
+- Edit `src/main/resources/application.properties`:
+```
+spring.data.mongodb.uri=mongodb+srv://<user>:<pass>@<cluster>/<params>
+spring.data.mongodb.database=game_app_sdp
 ```
 
-To run the container:
-
-```bash
-docker run -p 8080:8080 gameapi:latest
+2) Build
+```
+./mvnw clean package
 ```
 
----
+3) Run
+```
+./mvnw spring-boot:run
+```
+The API runs at `http://localhost:8080`.
 
-## Contributing
-
-Thank you for your interest in contributing!
-
-1. Fork the repository
-2. Create a feature branch
-
-   ```bash
-   git checkout -b feat/YourFeature
-   ```
-3. Commit your changes
-
-   ```bash
-   git commit -m "Add some feature"
-   ```
-4. Push to your fork
-
-   ```bash
-   git push origin feat/YourFeature
-   ```
-5. Open a pull request
-
-Please ensure your code follows standard formatting/style and is well-tested.
-
+## Docker (optional)
+```
+docker build -t game-app-sdp .
+docker run --rm -p 8080:8080 -e SPRING_DATA_MONGODB_URI="<your_mongo_uri>" -e SPRING_DATA_MONGODB_DATABASE=game_app_sdp game-app-sdp
 ```
 
+## API Overview (DTO-based)
+All endpoints accept and return DTOs. IDs are Mongo ObjectId strings.
+
+### Games `/games`
+- POST `/games`
+- GET `/games`
+- GET `/games/{id}`
+- PUT `/games/{id}`
+- DELETE `/games/{id}`
+
+GameDto
+```
+{
+  "id": "",
+  "name": "FIFA 25",
+  "description": "Football",
+  "price": 59.99
+}
+```
+
+### Members `/members`
+- POST `/members`
+- GET `/members`
+- GET `/members/{id}`
+- PUT `/members/{id}`
+- DELETE `/members/{id}`
+
+MemberDto
+```
+{
+  "id": "",
+  "name": "Alex",
+  "balance": 0.0,
+  "phone": "+1-555-0100"
+}
+```
+
+### Collections `/collections`
+`date` defaults to now if missing.
+- POST `/collections`
+- GET `/collections`
+- GET `/collections/{id}`
+- PUT `/collections/{id}`
+- DELETE `/collections/{id}`
+
+CollectionEntryDto
+```
+{
+  "id": "",
+  "date": "2025-09-18T10:00:00.000+00:00",
+  "amount": 250.0
+}
+```
+
+### Admin Users `/admin-users`
+`username` is unique.
+- POST `/admin-users`
+- GET `/admin-users`
+- GET `/admin-users/{id}`
+- PUT `/admin-users/{id}`
+- DELETE `/admin-users/{id}`
+
+AdminUserDto
+```
+{
+  "id": "",
+  "username": "admin",
+  "password": "secret"
+}
+```
+
+### Transactions `/transactions`
+References `members` and `games`. `dateTime` defaults to now if missing.
+- POST `/transactions`
+- GET `/transactions`
+- GET `/transactions/{id}`
+- GET `/transactions/member/{memberId}`
+- GET `/transactions/game/{gameId}`
+- PUT `/transactions/{id}`
+- DELETE `/transactions/{id}`
+
+TransactionDto
+```
+{
+  "id": "",
+  "memberId": "<memberObjectId>",
+  "gameId": "<gameObjectId>",
+  "amount": 99.0,
+  "dateTime": "2025-09-18T10:30:00.000+00:00"
+}
+```
+
+## Error Handling
+Global handler returns:
+- 400 Bad Request: `BusinessException`
+- 404 Not Found: `IdNotPresentException`, `CollectionNotFoundException`, `AdminUserNotFoundException`, `TransactionNotFoundException`
+
+## Notes
+- DTOs: `com.sakalesh.game_app_sdp.dto`
+- Mapper: `DtoMapper` converts entity <-> DTO
+- Unique index on `admin_users.username` via `@Indexed(unique = true)`
