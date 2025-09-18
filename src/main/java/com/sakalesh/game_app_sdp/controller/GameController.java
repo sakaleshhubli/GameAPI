@@ -1,6 +1,7 @@
 package com.sakalesh.game_app_sdp.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import com.sakalesh.game_app_sdp.exceptions.*;
 import com.sakalesh.game_app_sdp.services.GameService;
 import com.sakalesh.game_app_sdp.modal.Game;
 import com.sakalesh.game_app_sdp.repository.GameRepository;
+import com.sakalesh.game_app_sdp.dto.GameDto;
+import com.sakalesh.game_app_sdp.dto.DtoMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,27 +47,27 @@ public class GameController {
     }
 
     @PostMapping
-    public Game create(@RequestBody Game game) {
-        logger.info("Creating new game: {}", game.getName());
-        return service.create(game);
+    public GameDto create(@RequestBody GameDto dto) {
+        logger.info("Creating new game: {}", dto.getName());
+        return DtoMapper.toDto(service.create(DtoMapper.toEntity(dto)));
     }
 
     @GetMapping
-    public List<Game> findAll() {
+    public List<GameDto> findAll() {
         logger.info("Fetching all games");
-        return service.findAll();
+        return service.findAll().stream().map(DtoMapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping(path = "/{id}")
-    public Game findById(@PathVariable String id) throws IdNotPresentException {
+    public GameDto findById(@PathVariable String id) throws IdNotPresentException {
         logger.info("Fetching game with ID: {}", id);
-        return service.findById(id);
+        return DtoMapper.toDto(service.findById(id));
     }
 
     @PutMapping(path = "/{id}")
-    public Game update(@PathVariable String id, @RequestBody Game game) throws IdNotPresentException {
+    public GameDto update(@PathVariable String id, @RequestBody GameDto dto) throws IdNotPresentException {
         logger.info("Updating game with ID: {}", id);
-        return service.update(id, game);
+        return DtoMapper.toDto(service.update(id, DtoMapper.toEntity(dto)));
     }
 
     @DeleteMapping(path = "/{id}")

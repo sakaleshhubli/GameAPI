@@ -16,5 +16,10 @@ public class GlobalExceptions {
     public ResponseEntity<String> handleBusinessException(BusinessException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler({CollectionNotFoundException.class, AdminUserNotFoundException.class, TransactionNotFoundException.class})
+    public ResponseEntity<String> handleEntityNotFoundExceptions(Exception ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
 
