@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.sakalesh.game_app_sdp.exceptions.*;
 import com.sakalesh.game_app_sdp.modal.AdminUser;
@@ -18,6 +19,7 @@ import com.sakalesh.game_app_sdp.services.AdminUserService;
 import com.sakalesh.game_app_sdp.dto.AdminUserDto;
 import com.sakalesh.game_app_sdp.dto.DtoMapper;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(path = "/admin-users")
 public class AdminUserController {

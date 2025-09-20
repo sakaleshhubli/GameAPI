@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import com.sakalesh.game_app_sdp.exceptions.*;
 import com.sakalesh.game_app_sdp.modal.CollectionEntry;
@@ -18,6 +20,7 @@ import com.sakalesh.game_app_sdp.services.CollectionEntryService;
 import com.sakalesh.game_app_sdp.dto.CollectionEntryDto;
 import com.sakalesh.game_app_sdp.dto.DtoMapper;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(path = "/collections")
 public class CollectionEntryController {

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import com.sakalesh.game_app_sdp.exceptions.*;
 import com.sakalesh.game_app_sdp.services.GameService;
@@ -25,6 +27,8 @@ import com.sakalesh.game_app_sdp.dto.DtoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+@CrossOrigin("*")
 @RestController
 @RequestMapping(path = "/games")
 public class GameController {
